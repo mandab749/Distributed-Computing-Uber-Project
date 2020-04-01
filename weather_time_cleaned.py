@@ -40,6 +40,44 @@ def floater(line):
 
 
 weather1 = weather_days_rain.map(floater)
+
+#####################################################################################################################################
+import pandas as pd
+from shapely.geometry import Point, Polygon
+import geopandas as gpd
+import fiona as fiona
+
+#getting lat and long in proper format
+def latlong(line):
+     new = float(line[4]), float(line[3])
+     return line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], float(line[8]), line[9], line[10], new
+
+latlong = weather1.map(latlong)
+
+poly = gpd.GeoDataFrame.from_file('geo_export_b697b323-ce5d-4268-8623-7712a657fd85.shp')
+point  =pd.read_csv("C:/Users/Manda/Documents/NCF/Distributed Computing/uber-trip-data/uber-raw-data-may14.csv")
+
+def point(line):
+     poly = gpd.GeoDataFrame.from_file('geo_export_b697b323-ce5d-4268-8623-7712a657fd85.shp')
+     point = Point(line[11])
+     if poly.contains(point)[0] == True:
+         boro = "Bronx"
+     if poly.contains(point)[1] == True:
+         boro = "Staten Island"
+     if poly.contains(point)[2] == True:
+         boro = "Brooklyn"
+     if poly.contains(point)[3] == True:
+         boro = "Queens"
+     if poly.contains(point)[4] == True:
+         boro = "Manhattan"
+     else:
+         boro = "Other"
+     return line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10],line[11], boro
+
+latlongagain = latlong.map(point)
+
+##########################################################################
+
 weather_df = weather1.toDF()
 
 
